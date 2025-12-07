@@ -353,13 +353,22 @@ st.markdown("---")
 # ---- 저장 버튼 ----
 
 def save_current_case():
-    # 현재 케이스 + 평가자에 해당하는 기존 row는 삭제 후 다시 기록
+    # 현재까지 저장된 결과 가져오기
     eval_df = st.session_state.eval_df
-    mask = (eval_df["case_id"] == case_id) & (eval_df["rater_id"] == rater_id)
-    eval_df = eval_df[~mask]
 
+    # ⚠️ eval_df가 비어 있거나, 아직 case_id / rater_id 컬럼이 없을 수 있으므로
+    # 그럴 때는 그냥 필터링 없이 새 row만 추가하도록 처리
+    if (not eval_df.empty) and ("case_id" in eval_df.columns) and ("rater_id" in eval_df.columns):
+        mask = (eval_df["case_id"] == case_id) & (eval_df["rater_id"] == rater_id)
+        eval_df = eval_df[~mask]
+
+    # 이번 케이스의 A/B 결과 2줄을 새로 DataFrame으로 만들고
     new_rows = pd.DataFrame([res_A, res_B])
+
+    # 기존 eval_df와 합치기
     eval_df = pd.concat([eval_df, new_rows], ignore_index=True)
+
+    # 세션에 다시 저장
     st.session_state.eval_df = eval_df
 
     st.success(f"케이스 {case_id} (평가자 {rater_id}) 저장 완료!")
