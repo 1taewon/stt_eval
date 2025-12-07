@@ -391,7 +391,7 @@ st.sidebar.subheader("4. 결과 저장")
 
 if not st.session_state.eval_df.empty:
     output = io.BytesIO()
-    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
         # 평가 결과
         st.session_state.eval_df.to_excel(writer, index=False, sheet_name="STT_eval")
         # 원본 데이터(선택) 같이 저장
