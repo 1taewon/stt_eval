@@ -175,24 +175,6 @@ with colB:
 
 st.markdown("---")
 
-# ---- Turing test (A/B 선호도) ----
-st.markdown("### Turing test: 두 리포트 중 어떤 것을 최종 리포트로 쓰시겠습니까?")
-
-turing_choice = st.radio(
-    "선호 리포트 선택",
-    ["A", "B", "둘 다 비슷함", "둘 다 사용하기 어렵다"],
-    key=f"turing_{case_id}"
-)
-
-if turing_choice in ["A", "B"]:
-    winner_system = mapping[turing_choice]  # Selvas / GPT4o
-elif turing_choice == "둘 다 비슷함":
-    winner_system = "Tie"
-else:
-    winner_system = "None"
-
-st.markdown("---")
-
 # ---- 타이머 상태 초기화 함수 ----
 def init_timer_state(case_id, label):
     key_prefix = f"{case_id}_{label}"
@@ -214,7 +196,7 @@ def init_timer_state(case_id, label):
 st.markdown("### 각 리포트별 평가 입력")
 st.markdown("각 리포트에 대해 교정 → 편집부담 → 오류 라벨링 순서로 입력합니다.")
 
-def report_form(label: str):
+def report_form(label: str, turing_choice: str, winner_system: str):
     """
     Report A 또는 B에 대한 입력 폼.
     return: dict (해당 리포트의 평가 정보)
@@ -343,10 +325,35 @@ def report_form(label: str):
 col_form_A, col_form_B = st.columns(2)
 
 with col_form_A:
-    res_A = report_form("A")
+    # Turing test 변수를 먼저 초기화 (임시값)
+    res_A = report_form("A", "", "")
 
 with col_form_B:
-    res_B = report_form("B")
+    res_B = report_form("B", "", "")
+
+st.markdown("---")
+
+# ---- Turing test (A/B 선호도) - linguistic/feature error 라벨링 뒤로 이동 ----
+st.markdown("### Turing test: 두 리포트 중 어떤 것을 최종 리포트로 쓰시겠습니까?")
+
+turing_choice = st.radio(
+    "선호 리포트 선택",
+    ["A", "B", "둘 다 비슷함", "둘 다 사용하기 어렵다"],
+    key=f"turing_{case_id}"
+)
+
+if turing_choice in ["A", "B"]:
+    winner_system = mapping[turing_choice]  # Selvas / GPT4o
+elif turing_choice == "둘 다 비슷함":
+    winner_system = "Tie"
+else:
+    winner_system = "None"
+
+# Turing test 결과를 res_A, res_B에 업데이트
+res_A["turing_choice_label"] = turing_choice
+res_A["turing_winner_system"] = winner_system
+res_B["turing_choice_label"] = turing_choice
+res_B["turing_winner_system"] = winner_system
 
 st.markdown("---")
 
