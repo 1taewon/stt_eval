@@ -65,39 +65,18 @@ st.markdown("""
 - Turing test처럼 **A/B 중 더 좋은 리포트**도 선택합니다.  
 """)
 
-# Custom CSS for layout - Fixed top, Scrollable bottom
+# Custom CSS for scrollable evaluation section only
 st.markdown("""
 <style>
-    /* Gold standard box with scroll */
-    .gold-box {
-        background-color: #fff3cd;
-        padding: 15px;
-        border-radius: 5px;
-        max-height: 120px;
-        overflow-y: auto;
-        border-left: 4px solid #ffc107;
-        margin-bottom: 15px;
-    }
-    
-    /* Report boxes with scroll */
-    .report-box {
-        background-color: #e7f3ff;
-        padding: 12px;
-        border-radius: 5px;
-        max-height: 130px;
-        overflow-y: auto;
-        border-left: 4px solid #007bff;
-    }
-    
-    /* Evaluation form container - scrollable */
-    .eval-container {
-        max-height: calc(100vh - 470px);
+    .eval-scroll-container {
+        max-height: 60vh;
         overflow-y: auto;
         padding: 20px;
         border: 2px solid #007bff;
         border-radius: 8px;
         background-color: #f8f9fa;
         margin-top: 15px;
+        margin-bottom: 15px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -197,20 +176,19 @@ def get_text_for_label(label: str):
         return row[gpt4o_col]
 
 # ---- 골드 스탠다드 표시 ----
-st.markdown("### 📋 Gold Standard 판독문 (Reference)")
-st.markdown(f'<div class="gold-box">{row[gold_col]}</div>', unsafe_allow_html=True)
+with st.expander("Gold standard 판독문 (Reference)", expanded=True):
+    st.write(row[gold_col])
 
 # ---- A/B 리포트 표시 ----
-st.markdown("---")
 colA, colB = st.columns(2)
 
 with colA:
-    st.markdown("### 📄 Report A")
-    st.markdown(f'<div class="report-box">{get_text_for_label("A")}</div>', unsafe_allow_html=True)
+    st.subheader("Report A")
+    st.write(get_text_for_label("A"))
 
 with colB:
-    st.markdown("### 📄 Report B")
-    st.markdown(f'<div class="report-box">{get_text_for_label("B")}</div>', unsafe_allow_html=True)
+    st.subheader("Report B")
+    st.write(get_text_for_label("B"))
 
 st.markdown("---")
 
@@ -231,6 +209,9 @@ def init_timer_state(case_id, label):
     return elapsed_key, running_key, start_key
 
 # ---- Report A/B 각각에 대한 평가 폼 ----
+
+# 스크롤 가능한 평가 입력 영역 시작
+st.markdown('<div class="eval-scroll-container">', unsafe_allow_html=True)
 
 st.markdown("### 각 리포트별 평가 입력")
 st.markdown("각 리포트에 대해 교정 → 편집부담 → 오류 라벨링 순서로 입력합니다.")
