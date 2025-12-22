@@ -65,18 +65,44 @@ st.markdown("""
 - Turing test처럼 **A/B 중 더 좋은 리포트**도 선택합니다.  
 """)
 
-# Custom CSS for scrollable evaluation section only
+# Custom CSS - 상단 고정, 하단만 스크롤
 st.markdown("""
 <style>
-    .eval-scroll-container {
-        max-height: 60vh;
+    /* 전체 앱 컨테이너의 스크롤 제거 */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 1rem;
+        max-height: 100vh;
+        overflow: hidden;
+    }
+    
+    /* 고정 상단 섹션 */
+    .fixed-top {
+        position: relative;
+        background: white;
+        z-index: 100;
+        padding-bottom: 10px;
+    }
+    
+    /* 스크롤 가능한 평가 영역 */
+    .scrollable-evaluation {
+        height: 55vh;
         overflow-y: auto;
+        overflow-x: hidden;
         padding: 20px;
         border: 2px solid #007bff;
         border-radius: 8px;
         background-color: #f8f9fa;
-        margin-top: 15px;
-        margin-bottom: 15px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    
+    /* 저장 버튼 영역 */
+    .fixed-bottom {
+        position: relative;
+        background: white;
+        padding-top: 10px;
+        z-index: 100;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -165,6 +191,9 @@ row = base_df.iloc[st.session_state.current_idx]
 case_id = row[case_col]
 st.markdown(f"### 케이스 {case_id}  ( {st.session_state.current_idx + 1} / {total_cases} )")
 
+# 상단 고정 영역 시작
+st.markdown('<div class="fixed-top">', unsafe_allow_html=True)
+
 # A/B 매핑 (블라인드용)
 mapping = get_ab_mapping(case_id=str(case_id))
 
@@ -190,6 +219,9 @@ with colB:
     st.subheader("Report B")
     st.write(get_text_for_label("B"))
 
+st.markdown('</div>', unsafe_allow_html=True)
+# 상단 고정 영역 끝
+
 st.markdown("---")
 
 # ---- 타이머 상태 초기화 함수 ----
@@ -211,7 +243,7 @@ def init_timer_state(case_id, label):
 # ---- Report A/B 각각에 대한 평가 폼 ----
 
 # 스크롤 가능한 평가 입력 영역 시작
-st.markdown('<div class="eval-scroll-container">', unsafe_allow_html=True)
+st.markdown('<div class="scrollable-evaluation">', unsafe_allow_html=True)
 
 st.markdown("### 각 리포트별 평가 입력")
 st.markdown("각 리포트에 대해 교정 → 편집부담 → 오류 라벨링 순서로 입력합니다.")
@@ -380,6 +412,9 @@ st.markdown("---")
 st.markdown('</div>', unsafe_allow_html=True)
 # 스크롤 가능한 평가 입력 영역 끝
 
+# 저장 버튼 영역 시작
+st.markdown('<div class="fixed-bottom">', unsafe_allow_html=True)
+
 # ---- 저장 버튼 ----
 
 def save_current_case():
@@ -411,6 +446,9 @@ with col_s2:
     if st.button("저장 후 다음 케이스로 이동"):
         save_current_case()
         st.session_state.current_idx = min(total_cases - 1, st.session_state.current_idx + 1)
+
+st.markdown('</div>', unsafe_allow_html=True)
+# 저장 버튼 영역 끝
 
 # ---- 지금까지 입력한 결과 미리 보기 ----
 st.markdown("### 지금까지 저장된 평가 결과 (요약)")
