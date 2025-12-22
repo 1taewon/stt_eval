@@ -280,7 +280,7 @@ def report_form(label: str, turing_choice: str, winner_system: str):
         st.markdown(f"##### Report {label} 원본")
         report_text = get_text_for_label(label)
         st.markdown(
-            f'<div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; '
+            f'<div style="background-color: white; padding: 10px; border-radius: 5px; '
             f'border: 1px solid #d0d0d0; max-height: 200px; overflow-y: auto; '
             f'white-space: pre-wrap; font-family: monospace; color: black;">{report_text}</div>',
             unsafe_allow_html=True
