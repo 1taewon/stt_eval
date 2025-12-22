@@ -270,20 +270,15 @@ def report_form(label: str, turing_choice: str, winner_system: str):
     st.markdown("---")
     st.markdown("**4) Linguistic / Feature error 라벨링 (교정 후 입력)**")
     
-    # 참조용 판독문 전체 (Gold + Report A + Report B)
-    with st.expander("📋 참조용: 원본 판독문 전체 보기", expanded=False):
+    # 참조용 판독문 (Gold Standard + 현재 평가 중인 Report)
+    with st.expander(f"📋 참조용: 원본 판독문 전체 보기 (Gold Standard + Report {label})", expanded=False):
         st.markdown("##### Gold Standard 판독문")
         st.info(row[gold_col])
         
         st.markdown("---")
         
-        col_ref_a, col_ref_b = st.columns(2)
-        with col_ref_a:
-            st.markdown("##### Report A 원본")
-            st.text_area("", value=get_text_for_label("A"), height=200, key=f"ref_a_{case_id}_{label}", disabled=True)
-        with col_ref_b:
-            st.markdown("##### Report B 원본")
-            st.text_area("", value=get_text_for_label("B"), height=200, key=f"ref_b_{case_id}_{label}", disabled=True)
+        st.markdown(f"##### Report {label} 원본")
+        st.text_area("", value=get_text_for_label(label), height=200, key=f"ref_{case_id}_{label}", disabled=True)
     
     st.markdown("---")
 
