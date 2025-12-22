@@ -282,7 +282,7 @@ def report_form(label: str, turing_choice: str, winner_system: str):
         st.markdown(
             f'<div style="background-color: white; padding: 10px; border-radius: 5px; '
             f'border: 1px solid #d0d0d0; max-height: 200px; overflow-y: auto; '
-            f'white-space: pre-wrap; font-family: monospace; color: black;">{report_text}</div>',
+            f'white-space: pre-wrap;">{report_text}</div>',
             unsafe_allow_html=True
         )
     
