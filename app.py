@@ -65,49 +65,6 @@ st.markdown("""
 - Turing test처럼 **A/B 중 더 좋은 리포트**도 선택합니다.  
 """)
 
-# Custom CSS - 상단 고정, 하단만 스크롤
-st.markdown("""
-<style>
-    /* 전체 앱 컨테이너의 스크롤 제거 */
-    .main .block-container {
-        padding-top: 2rem;
-        padding-bottom: 1rem;
-        max-height: 100vh;
-        overflow: hidden;
-    }
-    
-    /* 고정 상단 섹션 */
-    .fixed-top {
-        position: relative;
-        background: white;
-        z-index: 100;
-        padding-bottom: 10px;
-    }
-    
-    /* 스크롤 가능한 평가 영역 */
-    .scrollable-evaluation {
-        height: 55vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        padding: 20px;
-        border: 2px solid #007bff;
-        border-radius: 8px;
-        background-color: #f8f9fa;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    
-    /* 저장 버튼 영역 */
-    .fixed-bottom {
-        position: relative;
-        background: white;
-        padding-top: 10px;
-        z-index: 100;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-
 # ---- 사이드바: 엑셀 업로드 & 기본 설정 ----
 st.sidebar.header("1. 엑셀 업로드")
 
@@ -191,9 +148,6 @@ row = base_df.iloc[st.session_state.current_idx]
 case_id = row[case_col]
 st.markdown(f"### 케이스 {case_id}  ( {st.session_state.current_idx + 1} / {total_cases} )")
 
-# 상단 고정 영역 시작
-st.markdown('<div class="fixed-top">', unsafe_allow_html=True)
-
 # A/B 매핑 (블라인드용)
 mapping = get_ab_mapping(case_id=str(case_id))
 
@@ -219,9 +173,6 @@ with colB:
     st.subheader("Report B")
     st.write(get_text_for_label("B"))
 
-st.markdown('</div>', unsafe_allow_html=True)
-# 상단 고정 영역 끝
-
 st.markdown("---")
 
 # ---- 타이머 상태 초기화 함수 ----
@@ -241,9 +192,6 @@ def init_timer_state(case_id, label):
     return elapsed_key, running_key, start_key
 
 # ---- Report A/B 각각에 대한 평가 폼 ----
-
-# 스크롤 가능한 평가 입력 영역 시작
-st.markdown('<div class="scrollable-evaluation">', unsafe_allow_html=True)
 
 st.markdown("### 각 리포트별 평가 입력")
 st.markdown("각 리포트에 대해 교정 → 편집부담 → 오류 라벨링 순서로 입력합니다.")
@@ -321,6 +269,17 @@ def report_form(label: str, turing_choice: str, winner_system: str):
 
     st.markdown("---")
     st.markdown("**4) Linguistic / Feature error 라벨링 (교정 후 입력)**")
+    
+    # Gold standard와 현재 Report 다시 표시 (오류 체크 시 참조용)
+    st.markdown("##### 📋 참조용: 원본 판독문")
+    
+    with st.expander("Gold Standard 판독문 보기", expanded=False):
+        st.write(row[gold_col])
+    
+    with st.expander(f"Report {label} 원본 보기", expanded=False):
+        st.write(get_text_for_label(label))
+    
+    st.markdown("---")
 
     # -------------------------
     # 4) Linguistic / Lexical Error
@@ -409,12 +368,6 @@ res_B["turing_winner_system"] = winner_system
 
 st.markdown("---")
 
-st.markdown('</div>', unsafe_allow_html=True)
-# 스크롤 가능한 평가 입력 영역 끝
-
-# 저장 버튼 영역 시작
-st.markdown('<div class="fixed-bottom">', unsafe_allow_html=True)
-
 # ---- 저장 버튼 ----
 
 def save_current_case():
@@ -446,9 +399,6 @@ with col_s2:
     if st.button("저장 후 다음 케이스로 이동"):
         save_current_case()
         st.session_state.current_idx = min(total_cases - 1, st.session_state.current_idx + 1)
-
-st.markdown('</div>', unsafe_allow_html=True)
-# 저장 버튼 영역 끝
 
 # ---- 지금까지 입력한 결과 미리 보기 ----
 st.markdown("### 지금까지 저장된 평가 결과 (요약)")
