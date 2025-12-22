@@ -65,6 +65,44 @@ st.markdown("""
 - Turing test처럼 **A/B 중 더 좋은 리포트**도 선택합니다.  
 """)
 
+# Custom CSS for layout - Fixed top, Scrollable bottom
+st.markdown("""
+<style>
+    /* Gold standard box with scroll */
+    .gold-box {
+        background-color: #fff3cd;
+        padding: 15px;
+        border-radius: 5px;
+        max-height: 120px;
+        overflow-y: auto;
+        border-left: 4px solid #ffc107;
+        margin-bottom: 15px;
+    }
+    
+    /* Report boxes with scroll */
+    .report-box {
+        background-color: #e7f3ff;
+        padding: 12px;
+        border-radius: 5px;
+        max-height: 130px;
+        overflow-y: auto;
+        border-left: 4px solid #007bff;
+    }
+    
+    /* Evaluation form container - scrollable */
+    .eval-container {
+        max-height: calc(100vh - 470px);
+        overflow-y: auto;
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        margin-top: 15px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
 # ---- 사이드바: 엑셀 업로드 & 기본 설정 ----
 st.sidebar.header("1. 엑셀 업로드")
 
@@ -159,19 +197,20 @@ def get_text_for_label(label: str):
         return row[gpt4o_col]
 
 # ---- 골드 스탠다드 표시 ----
-with st.expander("Gold standard 판독문 (Reference)", expanded=True):
-    st.write(row[gold_col])
+st.markdown("### 📋 Gold Standard 판독문 (Reference)")
+st.markdown(f'<div class="gold-box">{row[gold_col]}</div>', unsafe_allow_html=True)
 
 # ---- A/B 리포트 표시 ----
+st.markdown("---")
 colA, colB = st.columns(2)
 
 with colA:
-    st.subheader("Report A")
-    st.write(get_text_for_label("A"))
+    st.markdown("### 📄 Report A")
+    st.markdown(f'<div class="report-box">{get_text_for_label("A")}</div>', unsafe_allow_html=True)
 
 with colB:
-    st.subheader("Report B")
-    st.write(get_text_for_label("B"))
+    st.markdown("### 📄 Report B")
+    st.markdown(f'<div class="report-box">{get_text_for_label("B")}</div>', unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -356,6 +395,9 @@ res_B["turing_choice_label"] = turing_choice
 res_B["turing_winner_system"] = winner_system
 
 st.markdown("---")
+
+st.markdown('</div>', unsafe_allow_html=True)
+# 스크롤 가능한 평가 입력 영역 끝
 
 # ---- 저장 버튼 ----
 
